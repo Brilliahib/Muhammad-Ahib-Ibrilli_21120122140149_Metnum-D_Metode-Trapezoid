@@ -3,27 +3,31 @@ import time
 def f(x):
     return 4 / (1 + x**2)
 
-def reimann_integral(N):
-    delta_x = 1 / N
-    sum_result = sum(f(delta_x * (i + 0.5)) for i in range(N))
-    return delta_x * sum_result
+def trapezoidal_integration(a, b, N):
+    h = (b - a) / N
+    integral = 0.5 * (f(a) + f(b))
+    for i in range(1, N):
+        integral += f(a + i * h)
+    integral *= h
+    return integral
 
-def rms_error(approximation):
-    return abs(approximation - pi_reference)
+def calculate_pi(N):
+    return trapezoidal_integration(0, 1, N)
 
-def test_integration(N_values):
+def rms_error(approx, exact):
+    return ((approx - exact) ** 2) ** 0.5
+
+def main():
+    exact_pi = 3.14159265358979323846
+    N_values = [10, 100, 1000, 10000]
+
+    print("N\tApproximation\tRMS Error\tExecution Time")
     for N in N_values:
         start_time = time.time()
-        approximation = reimann_integral(N)
+        approx_pi = calculate_pi(N)
         execution_time = time.time() - start_time
-        error = rms_error(approximation)
-        print(f"N = {N}, Approximation = {approximation}, RMS Error = {error}, Execution Time = {execution_time}")
+        error = rms_error(approx_pi, exact_pi)
+        print(f"{N}\t{approx_pi}\t{error}\t{execution_time}")
 
-# Nilai referensi pi
-pi_reference = 3.14159265358979323846
-
-# Variasi nilai N
-N_values = [10, 100, 1000, 10000]
-
-# Pengujian
-test_integration(N_values)
+if __name__ == "__main__":
+    main()
